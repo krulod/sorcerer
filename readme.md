@@ -10,6 +10,22 @@ Install:
 $ pnpm add -D @krulod/sorcerer
 ```
 
+Setup `tsconfig.json`:
+
+```json
+{
+	"compilerOptions": {
+		"strict": true,
+		"target": "esnext",
+		"module": "esnext",
+		"lib": ["esnext", "dom"],
+		"moduleResolution": "node",
+		"experimentalDecorators": true
+	},
+	"files": ["./index.ts"]
+}
+```
+
 Write some modules and export them from `index.ts`:
 
 ```ts

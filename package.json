@@ -1,6 +1,6 @@
 {
 	"name": "@krulod/sorcerer",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"description": "An opinionated utility for building and testing packages",
 	"license": "AGPL-3.0-or-later",
 	"dependencies": {

@@ -79,7 +79,10 @@ function baseConfig() {
 	return {
 		external: /(node_modules|sorcerer)/,
 		plugins: [
-			typescript(),
+			typescript({
+				outDir: 'dist',
+				declaration: true,
+			}),
 			nodeResolve(),
 		],
 	}

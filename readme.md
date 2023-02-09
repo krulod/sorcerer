@@ -20,7 +20,9 @@ Setup `tsconfig.json`:
 		"module": "esnext",
 		"lib": ["esnext", "dom"],
 		"moduleResolution": "node",
-		"experimentalDecorators": true
+		"experimentalDecorators": true,
+		"declaration": true,
+		"outDir": "dist"
 	},
 	"files": ["./index.ts"]
 }

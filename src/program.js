@@ -26,7 +26,9 @@ export async function build() {
 
 	await build.write({
 		file: 'dist/tyger.js',
-		plugins: [terser()]
+		plugins: [
+			terser({compress: false, mangle: false}),
+		],
 	})
 
 	await build.close()
@@ -79,10 +81,7 @@ function baseConfig() {
 	return {
 		external: /(node_modules|sorcerer)/,
 		plugins: [
-			typescript({
-				outDir: 'dist',
-				declaration: true,
-			}),
+			typescript(),
 			nodeResolve(),
 		],
 	}

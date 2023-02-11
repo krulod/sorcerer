@@ -4,6 +4,7 @@ import * as child_process from 'node:child_process'
 import {rollup, watch} from 'rollup'
 import typescript from '@rollup/plugin-typescript'
 import nodeResolve from '@rollup/plugin-node-resolve'
+import multiEntry from '@rollup/plugin-multi-entry'
 
 const TEST_OUTPUT = {file: 'dist/tests.js'}
 
@@ -40,7 +41,7 @@ export async function build() {
 	
 	console.log('done!')
 	console.log('built files:', build.watchFiles.length)
-	console.log('built in:', formatDur(elapsed))
+	console.log('build time:', formatDur(elapsed))
 
 	const {gzipSize} = await import('gzip-size')
 
@@ -77,7 +78,7 @@ export async function dev() {
 		}
 
 		console.clear()
-		console.log('built in:', formatDur(event.duration), '\n')
+		console.log('build time:', formatDur(event.duration), '\n')
 		
 		testRun()
 	})
@@ -89,12 +90,13 @@ function rmDist() {
 	}
 }
 
-function baseConfig() {
+function baseConfig(...plug) {
 	return {
 		external: /(node_modules|sorcerer)/,
 		plugins: [
 			typescript(),
 			nodeResolve(),
+			...plug,
 		],
 	}
 }
@@ -111,7 +113,9 @@ function formatBytes(b) {
 
 function testConfig() {
 	return {
-		...baseConfig(),
+		...baseConfig(
+			multiEntry(),
+		),
 		input: fs.readdirSync('test').map(f => path.join('test', f)),
 	}
 }

@@ -16,28 +16,38 @@ export async function build() {
 		perf: true,
 	})
 
-	
 	await build.write({
 		dir: 'dist',
-		preserveModules: true
+		preserveModules: true,
 	})
 
 	const terser = (await import('@rollup/plugin-terser')).default
+	
+	const {name} = JSON.parse(fs.readFileSync('package.json', 'utf-8'))
+	
+	const bundlePath = `dist/${name}.min.js`
 
-	await build.write({
-		file: 'dist/tyger.js',
+	const {output} = await build.write({
+		file: bundlePath,
 		plugins: [
 			terser({compress: false, mangle: false}),
 		],
 	})
-
+	
 	await build.close()
-
+	
 	const [elapsed] = build.getTimings()['# BUILD']
-
+	
 	console.log('done!')
 	console.log('built files:', build.watchFiles.length)
 	console.log('built in:', formatDur(elapsed))
+
+	const {gzipSize} = await import('gzip-size')
+
+	const bundle = output[0].code
+	const minzipped = await gzipSize(bundle)
+
+	console.log('minzipped:', formatBytes(minzipped))
 }
 
 export async function test() {
@@ -62,7 +72,9 @@ export async function dev() {
 	})
 
 	watcher.on('event', event => {
-		if (event.code !== 'BUNDLE_END') return
+		if (event.code !== 'BUNDLE_END') {
+			return
+		}
 
 		console.clear()
 		console.log('built in:', formatDur(event.duration), '\n')
@@ -89,6 +101,12 @@ function baseConfig() {
 
 function formatDur(dur) {
 	return (dur / 1000).toFixed(1) + 's'
+}
+
+function formatBytes(b) {
+	return b < 1000
+		? b + 'b'
+		: (b / 1000).toFixed(2) + 'kb'
 }
 
 function testConfig() {
